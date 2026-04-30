@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conectando Generaciones</title>
+
+  <!-- FUENTES -->
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <div class="logo-punto"></div>
+    Conectando Generaciones
+  </div>
+
+  <ul class="enlaces-nav">
+    <li><a href="#modulos">Módulos</a></li>
+    <li><a href="#contenido">Contenido</a></li>
+    <li><a href="#talleres">Talleres</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+
+  <button class="boton-hamburguesa" onclick="alternarMenu()">☰</button>
+</nav>
+
+<div id="menuMovil" class="menu-movil">
+  <ul>
+    <li><a href="#modulos" onclick="alternarMenu()">Módulos</a></li>
+    <li><a href="#contenido" onclick="alternarMenu()">Contenido</a></li>
+    <li><a href="#talleres" onclick="alternarMenu()">Talleres</a></li>
+    <li><a href="#contacto" onclick="alternarMenu()">Contacto</a></li>
+  </ul>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>CONECTANDO <br><span>GENERACIONES</span></h1>
+  <p class="subtitulo-hero">
+    Empoderando adultos mayores con habilidades digitales
+  </p>
+
+  <div class="botones-hero">
+    <a href="#modulos" class="boton-primario">Ver módulos</a>
+    <a href="#contenido" class="boton-secundario">Ver contenido</a>
+  </div>
+</section>
+
+<!-- MODULOS -->
+<section id="modulos">
+  <h2 class="titulo-seccion">Módulos</h2>
+
+  <div class="grilla-modulos">
+    <div class="tarjeta-modulo cian" onclick="abrirModal('mod1')">
+      <div class="imagen-modulo cian">📱</div>
+      <div class="cuerpo-modulo">
+        <h3 class="nombre-modulo">Uso básico del celular</h3>
+      </div>
+    </div>
+
+    <div class="tarjeta-modulo verde" onclick="abrirModal('mod2')">
+      <div class="imagen-modulo verde">🌐</div>
+      <div class="cuerpo-modulo">
+        <h3 class="nombre-modulo">Internet</h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTENIDO -->
+<section id="contenido">
+  <h2 class="titulo-seccion">Contenido</h2>
+
+  <div class="grilla-contenido">
+    <div class="tarjeta-contenido">
+      <div class="miniatura-contenido">▶</div>
+      <div class="info-contenido">
+        <h3 class="titulo-contenido">Tutorial básico</h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TALLERES -->
+<section id="talleres">
+  <h2 class="titulo-seccion">Talleres</h2>
+  <p>Próximamente talleres presenciales</p>
+</section>
+
+<!-- CONTACTO -->
+<section id="contacto">
+  <h2 class="titulo-seccion">Contacto</h2>
+  <p>Escríbenos para más información</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  © 2025 Conectando Generaciones
+</footer>
+
+<!-- BOTON -->
+<button id="botonFlotante" onclick="abrirRegistro()">Inscribirme</button>
+
+<!-- MODAL REGISTRO -->
+<div id="modalRegistro" class="capa-registro" onclick="cerrarCapaRegistro(event)">
+  <div class="ventana-registro">
+    <h2>Registro</h2>
+
+    <form id="formularioRegistro">
+      <input id="campoNombre" placeholder="Nombre" required>
+      <input id="campoTelefono" placeholder="Teléfono" required>
+      <input id="campoEdad" placeholder="Edad" required>
+      <input id="campoBarrio" placeholder="Barrio" required>
+
+      <select id="campoTaller">
+        <option>Selecciona taller</option>
+        <option>Celular</option>
+        <option>Internet</option>
+      </select>
+
+      <button id="botonEnviarRegistro">Enviar</button>
+    </form>
+  </div>
+</div>
+
+<!-- JS -->
+<script src="js/script.js"></script>
+
+</body>
+</html>
