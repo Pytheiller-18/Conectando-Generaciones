@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arquitectura de Información — Conectando Generaciones</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cyan: #00C9C8;
+    --green: #52C41A;
+    --coral: #FF6B6B;
+    --amber: #FFC53D;
+    --purple: #7C3AED;
+    --navy: #0D1B2A;
+    --navy2: #152236;
+    --navy3: #1E3052;
+    --white: #F0F4F8;
+    --gray: #8899AA;
+    --start: #52C41A;
+    --process: #00C9C8;
+    --interaction: #7C3AED;
+    --decision: #FFC53D;
+    --error: #FF6B6B;
+    --end: #52C41A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    min-height: 100vh;
+  }
+
+  /* ─── HEADER ─────────────────────────── */
+  header {
+    background: var(--navy2);
+    border-bottom: 2px solid var(--cyan);
+    padding: 24px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo-header { display: flex; align-items: center; gap: 12px; }
+  .dot { width: 14px; height: 14px; border-radius: 50%; background: var(--cyan); }
+  .logo-header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px; color: var(--cyan); }
+  .logo-header span { font-size: 13px; color: var(--gray); font-weight: 300; display: block; }
+  .tabs { display: flex; gap: 4px; }
+  .tab {
+    padding: 8px 20px;
+    border-radius: 6px;
+    border: none;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+    background: transparent;
+    color: var(--gray);
+    border: 1px solid transparent;
+  }
+  .tab.active { background: var(--cyan); color: var(--navy); }
+  .tab:hover:not(.active) { border-color: var(--gray); color: var(--white); }
+
+  /* ─── SECTIONS ───────────────────────── */
+  section { display: none; padding: 40px; max-width: 1400px; margin: 0 auto; }
+  section.active { display: block; }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    letter-spacing: 3px;
+    color: var(--cyan);
+    margin-bottom: 8px;
+  }
+  .section-desc { color: var(--gray); font-size: 14px; margin-bottom: 36px; line-height: 1.6; }
+
+  /* ─── LEGEND ─────────────────────────── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 32px;
+    padding: 16px 20px;
+    background: var(--navy2);
+    border-radius: 10px;
+    border: 1px solid var(--navy3);
+  }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; }
+  .legend-box {
+    width: 24px; height: 16px; border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; color: var(--navy);
+  }
+  .legend-diamond {
+    width: 20px; height: 20px;
+    transform: rotate(45deg);
+    border-radius: 2px;
+  }
+  .legend-pill {
+    width: 28px; height: 16px;
+    border-radius: 8px;
+  }
+  .l-start { background: var(--start); }
+  .l-process { background: var(--process); }
+  .l-interaction { background: var(--interaction); }
+  .l-decision { background: var(--decision); }
+  .l-error { background: var(--error); }
+  .l-end { background: var(--end); }
+
+  /* ─── IA DIAGRAM ─────────────────────── */
+  .ia-grid {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 0;
+    border: 1px solid var(--navy3);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .ia-sidebar {
+    background: var(--navy2);
+    border-right: 1px solid var(--navy3);
+  }
+  .ia-sidebar-item {
+    padding: 16px 20px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--navy3);
+    transition: all .2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray);
+  }
+  .ia-sidebar-item:hover, .ia-sidebar-item.active {
+    background: var(--navy3);
+    color: var(--white);
+  }
+  .ia-sidebar-item.active { border-left: 3px solid var(--cyan); color: var(--cyan); }
+  .ia-icon { font-size: 18px; }
+
+  .ia-content { padding: 32px; }
+  .ia-panel { display: none; }
+  .ia-panel.active { display: block; }
+
+  .ia-panel h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+  }
+
+  .ia-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  .ia-card {
+    background: var(--navy2);
+    border: 1px solid var(--navy3);
+    border-radius: 10px;
+    padding: 16px;
+    transition: transform .2s, border-color .2s;
+  }
+  .ia-card:hover { transform: translateY(-3px); border-color: var(--cyan); }
+  .ia-card-icon { font-size: 24px; margin-bottom: 8px; }
+  .ia-card-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+  .ia-card-desc { font-size: 12px; color: var(--gray); line-height: 1.5; }
+  .ia-card-badge {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 700;
+  }
+  .badge-public { background: rgba(0,201,200,.15); color: var(--cyan); }
+  .badge-modal { background: rgba(124,58,237,.15); color: #a78bfa; }
+  .badge-prox { background: rgba(255,197,61,.15); color: var(--amber); }
+
+  .ia-map-visual {
+    margin-top: 32px;
+    padding: 24px;
+    background: var(--navy2);
+    border-radius: 10px;
+    border: 1px solid var(--navy3);
+  }
+  .ia-map-visual h4 { font-size: 12px; color: var(--gray); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; }
+
+  .tree-root {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .tree-node {
+    background: var(--cyan);
+    color: var(--navy);
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 13px;
+    text-align: center;
+  }
+  .tree-children {
+    display: flex;
+    gap: 16px;
+    margin-top: 0;
+    position: relative;
+    padding-top: 24px;
+  }
+  .tree-children::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 1px;
+    height: 24px;
+    background: var(--gray);
+  }
+  .tree-branch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+  .tree-branch::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 1px;
+    height: 20px;
+    background: var(--gray);
+  }
+  .tree-leaf {
+    margin-top: 20px;
+    background: var(--navy3);
+    border: 1px solid var(--gray);
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .tree-connector {
+    position: absolute;
+    top: 0;
+    height: 1px;
+    background: var(--gray);
+  }
+
+  /* ─── TASKFLOW ───────────────────────── */
+  .taskflow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+    padding: 32px 0;
+    flex-wrap: nowrap;
+  }
+  .tf-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .tf-box {
+    width: 120px;
+    padding: 12px 8px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .tf-label { font-size: 10px; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; }
+  .tf-arrow {
+    width: 40px;
+    height: 2px;
+    background: var(--gray);
+    position: relative;
+    flex-shrink: 0;
+    align-self: flex-start;
+    margin-top: 42px;
+  }
+  .tf-arrow::after {
+    content: '';
+    position: absolute;
+    right: -6px;
+    top: -4px;
+    border: 5px solid transparent;
+    border-left-color: var(--gray);
+  }
+  .box-start { background: var(--start); color: var(--navy); border-radius: 50px; }
+  .box-process { background: rgba(0,201,200,.15); border: 2px solid var(--process); color: var(--process); }
+  .box-interaction { background: rgba(124,58,237,.15); border: 2px solid var(--interaction); color: #c4b5fd; }
+  .box-decision {
+    background: rgba(255,197,61,.1);
+    border: 2px solid var(--decision);
+    color: var(--amber);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    font-size: 11px;
+  }
+  .box-error { background: rgba(255,107,107,.15); border: 2px dashed var(--error); color: var(--error); border-radius: 4px; }
+  .box-end { background: var(--end); color: var(--navy); border-radius: 50px; }
+
+  /* ─── USER FLOW SVG ──────────────────── */
+  .userflow-container {
+    background: var(--navy2);
+    border-radius: 12px;
+    border: 1px solid var(--navy3);
+    overflow: auto;
+    position: relative;
+  }
+  .userflow-controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .uf-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--navy3);
+    background: var(--navy2);
+    color: var(--white);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+    font-family: 'Outfit', sans-serif;
+  }
+  .uf-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+  .uf-btn.active { background: var(--cyan); color: var(--navy); border-color: var(--cyan); }
+
+  .archetypes {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .arch-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid;
+  }
+  .arch-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .arch-1 { border-color: var(--cyan); color: var(--cyan); background: rgba(0,201,200,.08); }
+  .arch-1 .arch-dot { background: var(--cyan); }
+  .arch-2 { border-color: var(--green); color: var(--green); background: rgba(82,196,26,.08); }
+  .arch-2 .arch-dot { background: var(--green); }
+  .arch-3 { border-color: var(--amber); color: var(--amber); background: rgba(255,197,61,.08); }
+  .arch-3 .arch-dot { background: var(--amber); }
+
+  svg.userflow { font-family: 'Outfit', sans-serif; }
+
+  /* Tooltips */
+  .tooltip {
+    position: fixed;
+    background: var(--navy2);
+    border: 1px solid var(--cyan);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    max-width: 220px;
+    pointer-events: none;
+    z-index: 999;
+    display: none;
+    line-height: 1.5;
+  }
+  .tooltip strong { color: var(--cyan); display: block; margin-bottom: 4px; }
+
+  /* Print */
+  @media print {
+    header .tabs { display: none; }
+    section { display: block !important; page-break-after: always; }
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    header { flex-direction: column; gap: 16px; padding: 16px 20px; }
+    section { padding: 20px; }
+    .ia-grid { grid-template-columns: 1fr; }
+    .taskflow { padding: 16px 0; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-header">
+    <div class="dot"></div>
+    <div>
+      <h1>Conectando Generaciones</h1>
+      <span>Arquitectura de Información · User Flow</span>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="showSection('ia')">🗺 Arquitectura</button>
+    <button class="tab" onclick="showSection('taskflow')">→ Taskflow</button>
+    <button class="tab" onclick="showSection('userflow')">◆ User Flow</button>
+  </div>
+</header>
+
+<div class="tooltip" id="tooltip"></div>
+
+<!-- ═══════════════════════════════════════════════
+     SECCIÓN 1: ARQUITECTURA DE INFORMACIÓN
+═══════════════════════════════════════════════ -->
+<section id="sec-ia" class="active">
+  <div class="section-title">Arquitectura de Información</div>
+  <p class="section-desc">
+    Mapa completo del sistema. Todas las pantallas y funciones agrupadas en categorías lógicas.
+    Haz clic en cada categoría para explorar su contenido.
+  </p>
+
+  <div class="ia-grid">
+    <div class="ia-sidebar">
+      <div class="ia-sidebar-item active" onclick="showPanel('home')">
+        <span class="ia-icon">🏠</span> Inicio
+      </div>
+      <div class="ia-sidebar-item" onclick="showPanel('modulos')">
+        <span class="ia-icon">📚</span> Módulos
+      </div>
+      <div class="ia-sidebar-item" onclick="showPanel('contenido')">
+        <span class="ia-icon">▶</span> Contenido
+      </div>
+      <div class="ia-sidebar-item" onclick="showPanel('talleres')">
+        <span class="ia-icon">🧑‍🤝‍🧑</span> Talleres
+      </div>
+      <div class="ia-sidebar-item" onclick="showPanel('contacto')">
+        <span class="ia-icon">✉</span> Contacto
+      </div>
+      <div class="ia-sidebar-item" onclick="showPanel('registro')">
+        <span class="ia-icon">📝</span> Registro
+      </div>
+    </div>
+
+    <div class="ia-content">
+
+      <!-- HOME -->
+      <div class="ia-panel active" id="panel-home">
+        <h3 style="color:var(--cyan)">🏠 Pantalla Principal</h3>
+        <div class="ia-cards">
+          <div class="ia-card">
+            <div class="ia-card-icon">🧭</div>
+            <div class="ia-card-name">Navegación</div>
+            <div class="ia-card-desc">Barra con links a Módulos, Contenido, Talleres y Contacto. Versión móvil con hamburguesa.</div>
+            <span class="ia-card-badge badge-public">Visible siempre</span>
+          </div>
+          <div class="ia-card">
+            <div class="ia-card-icon">🎯</div>
+            <div class="ia-card-name">Hero Section</div>
+            <div class="ia-card-desc">Título principal "Empoderando adultos mayores". CTAs: Ver módulos / Ver contenido.</div>
+            <span class="ia-card-badge badge-public">Pública</span>
+          </div>
+          <div class="ia-card">
+            <div class="ia-card-icon">📌</div>
+            <div class="ia-card-name">Botón Flotante</div>
+            <div class="ia-card-desc">"Inscribirme" — acceso directo al modal de registro desde cualquier scroll.</div>
+            <span class="ia-card-badge badge-public">Persistente</span>
+          </div>
+          <div class="ia-card">
+            <div class="ia-card-icon">©</div>
+            <div class="ia-card-name">Footer</div>
+            <div class="ia-card-desc">Créditos e información institucional al final de la página.</div>
+            <span class="ia-card-badge badge-public">Pública</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- MÓDULOS -->
+      <div class="ia-panel" id="panel-modulos">
+        <h3 style="color:var(--process)">📚 Módulos de Aprendizaje</h3>
+        <div class="ia-cards">
+          <div class="ia-card">
+            <div class="ia-card-icon">📱</div>
+            <div class="ia-card-name">Uso básico del celular</div>
+            <div class="ia-card-desc">Módulo cian. Abre modal con detalle del contenido al hacer clic.</div>
+            <span class="ia-card-badge badge-modal">Modal</span>
+          </div>
+          <div class="ia-card">
+            <div class="ia-card-icon">🌐</div>
+            <div class="ia-card-name">Internet</div>
+            <div class="ia-card-desc">Módulo verde. Navegación web básica, búsquedas, seguridad digital.</div>
+            <span class="ia-card-badge badge-modal">Modal</span>
+          </div>
+          <div class="ia-card" style="border-style:dashed; opacity:.6">
+            <div class="ia-card-icon">📷</div>
+            <div class="ia-card-name">Fotografía digital</div>
+            <div class="ia-card-desc">Módulo futuro: tomar fotos, compartir con familia.</div>
+            <span class="ia-card-badge badge-prox">Próximamente</span>
+          </div>
+          <div class="ia-card" style="border-style:dashed; opacity:.6">
+            <div class="ia-card-icon">💬</div>
+            <div class="ia-card-name">Mensajería</div>
+            <div class="ia-card-desc">WhatsApp, videollamadas con familia. Módulo futuro.</div>
+            <span class="ia-card-badge badge-prox">Próximamente</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTENIDO -->
+      <div class="ia-panel" id="panel-contenido">
+        <h3 style="color:var(--interaction)">▶ Contenido Educativo</h3>
+        <div class="ia-cards">
+          <div class="ia-card">
+            <div class="ia-card-icon">▶</div>
+            <div class="ia-card-name">Tutorial básico</div>
+            <div class="ia-card-desc">Video introductorio. Reproducción en pantalla con miniatura y controles.</div>
+            <span class="ia-card-badge badge-public">Pública</span>
+          </div>
+          <div class="ia-card" style="border-style:dashed; opacity:.6">
+            <div class="ia-card-icon">📄</div>
+            <div class="ia-card-name">Guías PDF</div>
+            <div class="ia-card-desc">Materiales descargables por módulo. Funcionalidad futura.</div>
+            <span class="ia-card-badge badge-prox">Próximamente</span>
+          </div>
+          <div class="ia-card" style="border-style:dashed; opacity:.6">
+            <div class="ia-card-icon">🧩</div>
+            <div class="ia-card-name">Ejercicios prácticos</div>
+            <div class="ia-card-desc">Actividades interactivas paso a paso. En desarrollo.</div>
+            <span class="ia-card-badge badge-prox">Próximamente</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TALLERES -->
+      <div class="ia-panel" id="panel-talleres">
+        <h3 style="color:var(--amber)">🧑‍🤝‍🧑 Talleres Presenciales</h3>
+        <div class="ia-cards">
+          <div class="ia-card">
+            <div class="ia-card-icon">📅</div>
+            <div class="ia-card-name">Calendario de talleres</div>
+            <div class="ia-card-desc">"Próximamente talleres presenciales." — sección por desarrollar.</div>
+            <span class="ia-card-badge badge-prox">Próximamente</span>
+          </div>
+          <div class="ia-card" style="border-style:dashed; opacity:.6">
+            <div class="ia-card-icon">📍</div>
+            <div class="ia-card-name">Ubicaciones</div>
+            <div class="ia-card-desc">Lugares y barrios donde se realizan los talleres presenciales.</div>
+            <span class="ia-card-badge badge-prox">Próximamente</span>
+          </div>
+          <div class="ia-card" style="border-style:dashed; opacity:.6">
+            <div class="ia-card-icon">🎓</div>
+            <div class="ia-card-name">Instructores</div>
+            <div class="ia-card-desc">Perfiles de los facilitadores del programa.</div>
+            <span class="ia-card-badge badge-prox">Próximamente</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTACTO -->
+      <div class="ia-panel" id="panel-contacto">
+        <h3 style="color:var(--coral)">✉ Contacto</h3>
+        <div class="ia-cards">
+          <div class="ia-card">
+            <div class="ia-card-icon">💬</div>
+            <div class="ia-card-name">Sección Contacto</div>
+            <div class="ia-card-desc">"Escríbenos para más información." — punto de entrada para consultas.</div>
+            <span class="ia-card-badge badge-public">Pública</span>
+          </div>
+          <div class="ia-card" style="border-style:dashed; opacity:.6">
+            <div class="ia-card-icon">📬</div>
+            <div class="ia-card-name">Formulario de contacto</div>
+            <div class="ia-card-desc">Formulario con nombre, email y mensaje. Por implementar.</div>
+            <span class="ia-card-badge badge-prox">Próximamente</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- REGISTRO -->
+      <div class="ia-panel" id="panel-registro">
+        <h3 style="color:var(--green)">📝 Flujo de Registro (Main Feature)</h3>
+        <div class="ia-cards">
+          <div class="ia-card">
+            <div class="ia-card-icon">📌</div>
+            <div class="ia-card-name">Botón "Inscribirme"</div>
+            <div class="ia-card-desc">Botón flotante visible en toda la página. Punto de entrada al registro.</div>
+            <span class="ia-card-badge badge-public">Persistente</span>
+          </div>
+          <div class="ia-card">
+            <div class="ia-card-icon">🗃</div>
+            <div class="ia-card-name">Modal de Registro</div>
+            <div class="ia-card-desc">Ventana emergente con formulario: nombre, teléfono, edad, barrio y selección de taller.</div>
+            <span class="ia-card-badge badge-modal">Modal</span>
+          </div>
+          <div class="ia-card">
+            <div class="ia-card-icon">📋</div>
+            <div class="ia-card-name">Campos del formulario</div>
+            <div class="ia-card-desc">Nombre · Teléfono · Edad · Barrio · Taller (Celular / Internet)</div>
+            <span class="ia-card-badge badge-modal">Input</span>
+          </div>
+          <div class="ia-card">
+            <div class="ia-card-icon">✅</div>
+            <div class="ia-card-name">Confirmación</div>
+            <div class="ia-card-desc">Estado de éxito tras envío correcto del formulario.</div>
+            <span class="ia-card-badge badge-public">Estado</span>
+          </div>
+          <div class="ia-card" style="border-color:var(--error)">
+            <div class="ia-card-icon">⚠️</div>
+            <div class="ia-card-name">Validación / Errores</div>
+            <div class="ia-card-desc">Campos vacíos, formatos incorrectos, fallo de red al enviar.</div>
+            <span class="ia-card-badge" style="background:rgba(255,107,107,.15);color:var(--error)">Error</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ÁRBOL VISUAL -->
+      <div class="ia-map-visual">
+        <h4>Árbol de Navegación Global</h4>
+        <div style="overflow-x:auto; padding-bottom:8px;">
+          <svg viewBox="0 0 900 280" width="100%" style="min-width:700px" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                <polygon points="0 0, 8 3, 0 6" fill="#8899AA"/>
+              </marker>
+            </defs>
+
+            <!-- Root -->
+            <rect x="350" y="20" width="200" height="40" rx="8" fill="#00C9C8"/>
+            <text x="450" y="46" text-anchor="middle" fill="#0D1B2A" font-weight="700" font-size="14" font-family="Outfit,sans-serif">Conectando Generaciones</text>
+
+            <!-- Nav branches -->
+            <!-- Nav line down -->
+            <line x1="450" y1="60" x2="450" y2="85" stroke="#8899AA" stroke-width="1.5"/>
+            <!-- horizontal bar -->
+            <line x1="100" y1="85" x2="800" y2="85" stroke="#8899AA" stroke-width="1.5"/>
+
+            <!-- Módulos -->
+            <line x1="100" y1="85" x2="100" y2="110" stroke="#8899AA" stroke-width="1.5"/>
+            <rect x="30" y="110" width="140" height="36" rx="6" fill="#152236" stroke="#00C9C8" stroke-width="1.5"/>
+            <text x="100" y="133" text-anchor="middle" fill="#00C9C8" font-size="12" font-weight="600" font-family="Outfit,sans-serif">Módulos</text>
+            <line x1="100" y1="146" x2="100" y2="170" stroke="#8899AA" stroke-width="1"/>
+            <line x1="55" y1="170" x2="145" y2="170" stroke="#8899AA" stroke-width="1"/>
+            <line x1="55" y1="170" x2="55" y2="188" stroke="#8899AA" stroke-width="1"/>
+            <rect x="10" y="188" width="90" height="28" rx="4" fill="#1E3052"/>
+            <text x="55" y="207" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Outfit,sans-serif">📱 Celular</text>
+            <line x1="145" y1="170" x2="145" y2="188" stroke="#8899AA" stroke-width="1"/>
+            <rect x="100" y="188" width="90" height="28" rx="4" fill="#1E3052"/>
+            <text x="145" y="207" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Outfit,sans-serif">🌐 Internet</text>
+
+            <!-- Contenido -->
+            <line x1="280" y1="85" x2="280" y2="110" stroke="#8899AA" stroke-width="1.5"/>
+            <rect x="210" y="110" width="140" height="36" rx="6" fill="#152236" stroke="#7C3AED" stroke-width="1.5"/>
+            <text x="280" y="133" text-anchor="middle" fill="#a78bfa" font-size="12" font-weight="600" font-family="Outfit,sans-serif">Contenido</text>
+            <line x1="280" y1="146" x2="280" y2="170" stroke="#8899AA" stroke-width="1"/>
+            <rect x="210" y="170" width="140" height="28" rx="4" fill="#1E3052"/>
+            <text x="280" y="189" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Outfit,sans-serif">▶ Tutoriales</text>
+
+            <!-- Talleres -->
+            <line x1="450" y1="85" x2="450" y2="110" stroke="#8899AA" stroke-width="1.5"/>
+            <rect x="380" y="110" width="140" height="36" rx="6" fill="#152236" stroke="#FFC53D" stroke-width="1.5"/>
+            <text x="450" y="133" text-anchor="middle" fill="#FFC53D" font-size="12" font-weight="600" font-family="Outfit,sans-serif">Talleres</text>
+            <line x1="450" y1="146" x2="450" y2="170" stroke="#8899AA" stroke-width="1"/>
+            <rect x="380" y="170" width="140" height="28" rx="4" fill="#1E3052"/>
+            <text x="450" y="189" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Outfit,sans-serif">📅 Próximamente</text>
+
+            <!-- Contacto -->
+            <line x1="620" y1="85" x2="620" y2="110" stroke="#8899AA" stroke-width="1.5"/>
+            <rect x="550" y="110" width="140" height="36" rx="6" fill="#152236" stroke="#FF6B6B" stroke-width="1.5"/>
+            <text x="620" y="133" text-anchor="middle" fill="#FF6B6B" font-size="12" font-weight="600" font-family="Outfit,sans-serif">Contacto</text>
+            <line x1="620" y1="146" x2="620" y2="170" stroke="#8899AA" stroke-width="1"/>
+            <rect x="550" y="170" width="140" height="28" rx="4" fill="#1E3052"/>
+            <text x="620" y="189" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Outfit,sans-serif">✉ Escríbenos</text>
+
+            <!-- Registro -->
+            <line x1="800" y1="85" x2="800" y2="110" stroke="#8899AA" stroke-width="1.5"/>
+            <rect x="730" y="110" width="140" height="36" rx="6" fill="#152236" stroke="#52C41A" stroke-width="2"/>
+            <text x="800" y="133" text-anchor="middle" fill="#52C41A" font-size="12" font-weight="700" font-family="Outfit,sans-serif">⭐ Registro</text>
+            <line x1="800" y1="146" x2="800" y2="170" stroke="#52C41A" stroke-width="1.5"/>
+            <rect x="730" y="170" width="140" height="28" rx="4" fill="#152236" stroke="#52C41A" stroke-width="1"/>
+            <text x="800" y="189" text-anchor="middle" fill="#52C41A" font-size="10" font-weight="600" font-family="Outfit,sans-serif">📝 Modal Formulario</text>
+
+            <!-- Main Feature label -->
+            <rect x="755" y="235" width="90" height="22" rx="4" fill="rgba(82,196,26,.2)"/>
+            <text x="800" y="250" text-anchor="middle" fill="#52C41A" font-size="9" font-weight="700" font-family="Outfit,sans-serif">MAIN FEATURE</text>
+          </svg>
+        </div>
+      </div>
+
+    </div><!-- ia-content -->
+  </div><!-- ia-grid -->
+</section>
+
+
+<!-- ═══════════════════════════════════════════════
+     SECCIÓN 2: TASKFLOW
+═══════════════════════════════════════════════ -->
+<section id="sec-taskflow">
+  <div class="section-title">Taskflow — Inscripción al taller</div>
+  <p class="section-desc">
+    Camino mínimo de A → B para la función principal: que un usuario se inscriba a un taller.
+    Una sola ruta, sin bifurcaciones. Es el esqueleto del User Flow completo.
+  </p>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-box legend-pill l-start"></div> Inicio / Cierre</div>
+    <div class="legend-item"><div class="legend-box l-process"></div> Proceso</div>
+    <div class="legend-item"><div class="legend-box l-interaction" style="border-radius:3px"></div> Interacción</div>
+    <div class="legend-item"><div style="width:20px;height:20px;transform:rotate(45deg);border-radius:2px;background:var(--decision)"></div>&nbsp;&nbsp;Decisión</div>
+    <div class="legend-item"><div class="legend-box l-error" style="border:2px dashed var(--error);background:rgba(255,107,107,.15);color:var(--error)"></div> Error</div>
+  </div>
+
+  <div style="overflow-x:auto; background:var(--navy2); border-radius:12px; border:1px solid var(--navy3); padding:32px;">
+    <div class="taskflow" style="min-width:900px; justify-content:center;">
+
+      <div class="tf-step">
+        <div class="tf-box box-start" style="width:110px">🏠 Llega al sitio</div>
+        <div class="tf-label">inicio</div>
+      </div>
+
+      <div class="tf-arrow"></div>
+
+      <div class="tf-step">
+        <div class="tf-box box-process">Carga la página principal</div>
+        <div class="tf-label">proceso</div>
+      </div>
+
+      <div class="tf-arrow"></div>
+
+      <div class="tf-step">
+        <div class="tf-box box-interaction">Hace clic en "Inscribirme"</div>
+        <div class="tf-label">interacción</div>
+      </div>
+
+      <div class="tf-arrow"></div>
+
+      <div class="tf-step">
+        <div class="tf-box box-process">Se abre el modal de registro</div>
+        <div class="tf-label">proceso</div>
+      </div>
+
+      <div class="tf-arrow"></div>
+
+      <div class="tf-step">
+        <div class="tf-box box-interaction">Completa el formulario</div>
+        <div class="tf-label">interacción</div>
+      </div>
+
+      <div class="tf-arrow"></div>
+
+      <div class="tf-step">
+        <div class="tf-box box-interaction">Selecciona taller y envía</div>
+        <div class="tf-label">interacción</div>
+      </div>
+
+      <div class="tf-arrow"></div>
+
+      <div class="tf-step">
+        <div class="tf-box box-process">Sistema procesa el registro</div>
+        <div class="tf-label">proceso</div>
+      </div>
+
+      <div class="tf-arrow"></div>
+
+      <div class="tf-step">
+        <div class="tf-box box-end" style="width:110px">✅ Inscrito con éxito</div>
+        <div class="tf-label">cierre</div>
+      </div>
+
+    </div>
+
+    <div style="margin-top:24px; padding:16px 20px; background:var(--navy3); border-radius:8px; font-size:13px; color:var(--gray)">
+      <strong style="color:var(--white)">Happy Path resumido:</strong>
+      Llegada → Scroll / Vista del hero → Clic en botón flotante → Modal → Llenar datos → Seleccionar taller → Enviar → Confirmación.
+      <strong style="color:var(--cyan)">7 pasos</strong> desde la entrada hasta el objetivo.
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════
+     SECCIÓN 3: USER FLOW COMPLETO
+═══════════════════════════════════════════════ -->
+<section id="sec-userflow">
+  <div class="section-title">User Flow Completo</div>
+  <p class="section-desc">
+    Diagrama completo con los 5 tipos de cajas, caminos alternos y arquetipos de usuario diferenciados por color.
+    Pasa el mouse sobre cada nodo para ver su descripción.
+  </p>
+
+  <div class="archetypes">
+    <div class="arch-badge arch-1"><div class="arch-dot"></div>Arquetipo A — Adulto mayor (usuario final)</div>
+    <div class="arch-badge arch-2"><div class="arch-dot"></div>Arquetipo B — Familiar / Cuidador</div>
+    <div class="arch-badge arch-3"><div class="arch-dot"></div>Arquetipo C — Voluntario / Instructor</div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-pill" style="width:28px;height:16px;background:var(--start)"></div> Inicio / Cierre</div>
+    <div class="legend-item"><div style="width:24px;height:16px;background:rgba(0,201,200,.2);border:2px solid var(--process);border-radius:3px"></div> Proceso</div>
+    <div class="legend-item"><div style="width:24px;height:16px;background:rgba(124,58,237,.2);border:2px solid var(--interaction);border-radius:3px"></div> Interacción</div>
+    <div class="legend-item"><div style="width:18px;height:18px;transform:rotate(45deg);background:rgba(255,197,61,.2);border:2px solid var(--decision)"></div>&nbsp;&nbsp;Decisión</div>
+    <div class="legend-item"><div style="width:24px;height:16px;background:rgba(255,107,107,.2);border:2px dashed var(--error);border-radius:3px"></div> Error</div>
+  </div>
+
+  <div class="userflow-container">
+    <svg class="userflow" viewBox="0 0 1200 980" width="100%" style="min-width:900px; display:block;" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrowA" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#00C9C8"/>
+        </marker>
+        <marker id="arrowB" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#52C41A"/>
+        </marker>
+        <marker id="arrowC" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#FFC53D"/>
+        </marker>
+        <marker id="arrowE" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#FF6B6B"/>
+        </marker>
+        <marker id="arrowG" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#8899AA"/>
+        </marker>
+      </defs>
+
+      <!-- ── COLUMNA 1: ENTRADA ── -->
+
+      <!-- [INICIO A] Adulto mayor -->
+      <rect x="30" y="30" width="140" height="44" rx="22" fill="#52C41A" class="uf-node" data-tip="INICIO — Adulto Mayor: Usuario principal del sistema. Llega directo al sitio o por recomendación familiar."/>
+      <text x="100" y="57" text-anchor="middle" fill="#0D1B2A" font-size="11" font-weight="700" font-family="Outfit,sans-serif">🧓 Adulto Mayor</text>
+
+      <!-- [INICIO B] Familiar -->
+      <rect x="30" y="110" width="140" height="44" rx="22" fill="#52C41A" class="uf-node" data-tip="INICIO — Familiar/Cuidador: Familiar que busca inscribir o ayudar al adulto mayor."/>
+      <text x="100" y="137" text-anchor="middle" fill="#0D1B2A" font-size="11" font-weight="700" font-family="Outfit,sans-serif">👨‍👩‍👧 Familiar</text>
+
+      <!-- [INICIO C] Voluntario -->
+      <rect x="30" y="190" width="140" height="44" rx="22" fill="#FFC53D" class="uf-node" data-tip="INICIO — Voluntario/Instructor: Persona que quiere colaborar como facilitador en los talleres presenciales."/>
+      <text x="100" y="217" text-anchor="middle" fill="#0D1B2A" font-size="11" font-weight="700" font-family="Outfit,sans-serif">🎓 Voluntario</text>
+
+      <!-- flechas hacia PROCESO carga -->
+      <line x1="170" y1="52" x2="240" y2="90" stroke="#00C9C8" stroke-width="1.5" marker-end="url(#arrowA)"/>
+      <line x1="170" y1="132" x2="240" y2="105" stroke="#52C41A" stroke-width="1.5" marker-end="url(#arrowB)"/>
+      <line x1="170" y1="212" x2="240" y2="115" stroke="#FFC53D" stroke-width="1.5" marker-end="url(#arrowC)"/>
+
+      <!-- [PROCESO] Carga la página -->
+      <rect x="240" y="74" width="140" height="44" rx="6" fill="rgba(0,201,200,.12)" stroke="#00C9C8" stroke-width="1.5" class="uf-node" data-tip="PROCESO — Carga del sitio: El servidor entrega la página. La nav, el hero, los módulos y el botón flotante se muestran."/>
+      <text x="310" y="97" text-anchor="middle" fill="#00C9C8" font-size="11" font-weight="600" font-family="Outfit,sans-serif">Carga</text>
+      <text x="310" y="111" text-anchor="middle" fill="#00C9C8" font-size="11" font-weight="600" font-family="Outfit,sans-serif">página principal</text>
+
+      <!-- [DECISIÓN] ¿Conoce el sitio? -->
+      <polygon points="450,82 510,100 450,118 390,100" fill="rgba(255,197,61,.12)" stroke="#FFC53D" stroke-width="1.5" class="uf-node" data-tip="DECISIÓN — ¿Ya conoce el sitio?: Bifurcación entre usuario nuevo (explora) y usuario recurrente (va directo a inscribirse)."/>
+      <text x="450" y="97" text-anchor="middle" fill="#FFC53D" font-size="10" font-weight="600" font-family="Outfit,sans-serif">¿Conoce</text>
+      <text x="450" y="112" text-anchor="middle" fill="#FFC53D" font-size="10" font-weight="600" font-family="Outfit,sans-serif">el sitio?</text>
+
+      <!-- Proceso → Decisión -->
+      <line x1="380" y1="96" x2="388" y2="100" stroke="#8899AA" stroke-width="1.5" marker-end="url(#arrowG)"/>
+
+      <!-- NO → explora -->
+      <text x="456" y="78" font-size="9" fill="#8899AA" font-family="Outfit,sans-serif">NO</text>
+      <line x1="450" y1="82" x2="450" y2="50" stroke="#8899AA" stroke-width="1" stroke-dasharray="4 3"/>
+      <line x1="450" y1="50" x2="570" y2="50" stroke="#8899AA" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arrowG)"/>
+
+      <!-- SI → directo a inscribirse -->
+      <text x="515" y="97" font-size="9" fill="#FFC53D" font-family="Outfit,sans-serif">SÍ</text>
+      <line x1="510" y1="100" x2="570" y2="100" stroke="#FFC53D" stroke-width="1.5" marker-end="url(#arrowC)"/>
+
+      <!-- ── COLUMNA 2: EXPLORACIÓN ── -->
+
+      <!-- [INTERACCIÓN] Explora contenido -->
+      <rect x="570" y="30" width="140" height="44" rx="6" fill="rgba(124,58,237,.15)" stroke="#7C3AED" stroke-width="1.5" class="uf-node" data-tip="INTERACCIÓN — Explorar: El usuario navega por los módulos, ve el contenido, lee sobre los talleres. Puede abrir el modal de un módulo."/>
+      <text x="640" y="53" text-anchor="middle" fill="#c4b5fd" font-size="11" font-weight="600" font-family="Outfit,sans-serif">Explora módulos</text>
+      <text x="640" y="67" text-anchor="middle" fill="#c4b5fd" font-size="11" font-weight="600" font-family="Outfit,sans-serif">y contenido</text>
+
+      <!-- [INTERACCIÓN] Va a inscribirse -->
+      <rect x="570" y="82" width="140" height="44" rx="6" fill="rgba(124,58,237,.15)" stroke="#7C3AED" stroke-width="1.5" class="uf-node" data-tip="INTERACCIÓN — Clic en Inscribirme: El usuario hace clic en el botón flotante o en el CTA del hero para inscribirse."/>
+      <text x="640" y="105" text-anchor="middle" fill="#c4b5fd" font-size="11" font-weight="600" font-family="Outfit,sans-serif">Clic en</text>
+      <text x="640" y="119" text-anchor="middle" fill="#c4b5fd" font-size="11" font-weight="600" font-family="Outfit,sans-serif">"Inscribirme"</text>
+
+      <!-- Explora → puede ir a inscribirse -->
+      <line x1="640" y1="74" x2="640" y2="82" stroke="#8899AA" stroke-width="1" stroke-dasharray="3 3"/>
+
+      <!-- [DECISIÓN] ¿Quiere inscribirse? -->
+      <polygon points="640,148 700,168 640,188 580,168" fill="rgba(255,197,61,.12)" stroke="#FFC53D" stroke-width="1.5" class="uf-node" data-tip="DECISIÓN — ¿Se inscribe?: Tras explorar, el usuario decide si quiere registrarse o sigue navegando."/>
+      <text x="640" y="165" text-anchor="middle" fill="#FFC53D" font-size="10" font-weight="600" font-family="Outfit,sans-serif">¿Se quiere</text>
+      <text x="640" y="180" text-anchor="middle" fill="#FFC53D" font-size="10" font-weight="600" font-family="Outfit,sans-serif">inscribir?</text>
+
+      <!-- Inscribirse → decisión -->
+      <line x1="640" y1="126" x2="640" y2="148" stroke="#7C3AED" stroke-width="1.5" marker-end="url(#arrowG)"/>
+
+      <!-- NO → abandona o sigue explorando -->
+      <text x="580" y="165" font-size="9" fill="#FF6B6B" font-family="Outfit,sans-serif">NO</text>
+      <line x1="580" y1="168" x2="500" y2="168" stroke="#FF6B6B" stroke-width="1" stroke-dasharray="3 3"/>
+      <line x1="500" y1="168" x2="500" y2="52" stroke="#FF6B6B" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrowE)"/>
+
+      <!-- SÍ ↓ -->
+      <text x="645" y="194" font-size="9" fill="#FFC53D" font-family="Outfit,sans-serif">SÍ</text>
+      <line x1="640" y1="188" x2="640" y2="210" stroke="#FFC53D" stroke-width="1.5" marker-end="url(#arrowC)"/>
+
+      <!-- ── COLUMNA 3: MODAL REGISTRO ── -->
+
+      <!-- [PROCESO] Abre modal -->
+      <rect x="570" y="210" width="140" height="44" rx="6" fill="rgba(0,201,200,.12)" stroke="#00C9C8" stroke-width="1.5" class="uf-node" data-tip="PROCESO — Apertura del modal: JavaScript muestra el overlay con el formulario de registro sobre la página."/>
+      <text x="640" y="233" text-anchor="middle" fill="#00C9C8" font-size="11" font-weight="600" font-family="Outfit,sans-serif">Abre modal</text>
+      <text x="640" y="247" text-anchor="middle" fill="#00C9C8" font-size="11" font-weight="600" font-family="Outfit,sans-serif">de registro</text>
+
+      <line x1="640" y1="254" x2="640" y2="274" stroke="#00C9C8" stroke-width="1.5" marker-end="url(#arrowA)"/>
+
+      <!-- [INTERACCIÓN] Llena formulario -->
+      <rect x="570" y="274" width="140" height="44" rx="6" fill="rgba(124,58,237,.15)" stroke="#7C3AED" stroke-width="1.5" class="uf-node" data-tip="INTERACCIÓN — Llenar formulario: El usuario ingresa nombre, teléfono, edad, barrio y selecciona el taller deseado."/>
+      <text x="640" y="297" text-anchor="middle" fill="#c4b5fd" font-size="11" font-weight="600" font-family="Outfit,sans-serif">Llena</text>
+      <text x="640" y="311" text-anchor="middle" fill="#c4b5fd" font-size="11" font-weight="600" font-family="Outfit,sans-serif">el formulario</text>
+
+      <line x1="640" y1="318" x2="640" y2="338" stroke="#7C3AED" stroke-width="1.5" marker-end="url(#arrowG)"/>
+
+      <!-- [DECISIÓN] ¿Datos válidos? -->
+      <polygon points="640,338 710,358 640,378 570,358" fill="rgba(255,197,61,.12)" stroke="#FFC53D" stroke-width="1.5" class="uf-node" data-tip="DECISIÓN — Validación del formulario: ¿Están todos los campos requeridos completados con formatos correctos?"/>
+      <text x="640" y="355" text-anchor="middle" fill="#FFC53D" font-size="10" font-weight="600" font-family="Outfit,sans-serif">¿Datos</text>
+      <text x="640" y="370" text-anchor="middle" fill="#FFC53D" font-size="10" font-weight="600" font-family="Outfit,sans-serif">válidos?</text>
+
+      <!-- NO → error validación -->
+      <text x="714" y="356" font-size="9" fill="#FF6B6B" font-family="Outfit,sans-serif">NO</text>
+      <line x1="710" y1="358" x2="780" y2="358" stroke="#FF6B6B" stroke-width="1.5" marker-end="url(#arrowE)"/>
+
+      <!-- SI ↓ -->
+      <text x="645" y="384" font-size="9" fill="#52C41A" font-family="Outfit,sans-serif">SÍ</text>
+      <line x1="640" y1="378" x2="640" y2="400" stroke="#52C41A" stroke-width="1.5" marker-end="url(#arrowB)"/>
+
+      <!-- ── ERROR validación ── -->
+      <rect x="780" y="336" width="150" height="44" rx="4" fill="rgba(255,107,107,.12)" stroke="#FF6B6B" stroke-width="1.5" stroke-dasharray="5 3" class="uf-node" data-tip="ERROR — Validación: Campos vacíos o mal formato (ej. edad no numérica). El sistema resalta el campo en rojo y muestra mensaje de ayuda."/>
+      <text x="855" y="359" text-anchor="middle" fill="#FF6B6B" font-size="11" font-weight="600" font-family="Outfit,sans-serif">⚠ Error</text>
+      <text x="855" y="373" text-anchor="middle" fill="#FF6B6B" font-size="11" font-weight="600" font-family="Outfit,sans-serif">validación</text>
+
+      <!-- Error → volver a llenar -->
+      <line x1="780" y1="358" x2="730" y2="298" stroke="#FF6B6B" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrowE)"/>
+      <text x="762" y="320" font-size="9" fill="#FF6B6B" font-family="Outfit,sans-serif">Corregir</text>
+
+      <!-- ── PROCESO ENVÍO ── -->
+      <!-- [PROCESO] Envío al servidor -->
+      <rect x="570" y="400" width="140" height="44" rx="6" fill="rgba(0,201,200,.12)" stroke="#00C9C8" stroke-width="1.5" class="uf-node" data-tip="PROCESO — Envío al servidor: Los datos del formulario se envían al backend para ser procesados y almacenados."/>
+      <text x="640" y="423" text-anchor="middle" fill="#00C9C8" font-size="11" font-weight="600" font-family="Outfit,sans-serif">Envío de datos</text>
+      <text x="640" y="437" text-anchor="middle" fill="#00C9C8" font-size="11" font-weight="600" font-family="Outfit,sans-serif">al servidor</text>
+
+      <line x1="640" y1="444" x2="640" y2="464" stroke="#00C9C8" stroke-width="1.5" marker-end="url(#arrowA)"/>
+
+      <!-- [DECISIÓN] ¿Registro exitoso? -->
+      <polygon points="640,464 710,484 640,504 570,484" fill="rgba(255,197,61,.12)" stroke="#FFC53D" stroke-width="1.5" class="uf-node" data-tip="DECISIÓN — ¿Registro exitoso?: ¿El servidor procesó correctamente la inscripción? Puede fallar por error de red o duplicado."/>
+      <text x="640" y="481" text-anchor="middle" fill="#FFC53D" font-size="10" font-weight="600" font-family="Outfit,sans-serif">¿Registro</text>
+      <text x="640" y="496" text-anchor="middle" fill="#FFC53D" font-size="10" font-weight="600" font-family="Outfit,sans-serif">exitoso?</text>
+
+      <!-- NO → error de red -->
+      <text x="714" y="482" font-size="9" fill="#FF6B6B" font-family="Outfit,sans-serif">NO</text>
+      <line x1="710" y1="484" x2="780" y2="484" stroke="#FF6B6B" stroke-width="1.5" marker-end="url(#arrowE)"/>
+
+      <!-- SI ↓ -->
+      <text x="645" y="510" font-size="9" fill="#52C41A" font-family="Outfit,sans-serif">SÍ</text>
+      <line x1="640" y1="504" x2="640" y2="524" stroke="#52C41A" stroke-width="1.5" marker-end="url(#arrowB)"/>
+
+      <!-- ── ERROR red ── -->
+      <rect x="780" y="462" width="150" height="44" rx="4" fill="rgba(255,107,107,.12)" stroke="#FF6B6B" stroke-width="1.5" stroke-dasharray="5 3" class="uf-node" data-tip="ERROR — Fallo de red: El servidor no responde o hay timeout. Se muestra mensaje 'Inténtalo de nuevo' con botón de reintento."/>
+      <text x="855" y="485" text-anchor="middle" fill="#FF6B6B" font-size="11" font-weight="600" font-family="Outfit,sans-serif">⚠ Error</text>
+      <text x="855" y="499" text-anchor="middle" fill="#FF6B6B" font-size="11" font-weight="600" font-family="Outfit,sans-serif">de red</text>
+
+      <!-- Reintento -->
+      <line x1="855" y1="506" x2="855" y2="540" stroke="#FF6B6B" stroke-width="1" stroke-dasharray="3 3"/>
+      <line x1="855" y1="540" x2="715" y2="540" stroke="#FF6B6B" stroke-width="1" stroke-dasharray="3 3"/>
+      <line x1="715" y1="540" x2="715" y2="410" stroke="#FF6B6B" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrowE)"/>
+      <text x="860" y="530" font-size="9" fill="#FF6B6B" font-family="Outfit,sans-serif">Reintentar</text>
+
+      <!-- ── CONFIRMACIÓN ── -->
+
+      <!-- [PROCESO] Confirmación -->
+      <rect x="570" y="524" width="140" height="44" rx="6" fill="rgba(0,201,200,.12)" stroke="#00C9C8" stroke-width="1.5" class="uf-node" data-tip="PROCESO — Confirmación: El sistema muestra el mensaje de éxito, cierra el modal y presenta los próximos pasos al usuario."/>
+      <text x="640" y="547" text-anchor="middle" fill="#00C9C8" font-size="11" font-weight="600" font-family="Outfit,sans-serif">Muestra</text>
+      <text x="640" y="561" text-anchor="middle" fill="#00C9C8" font-size="11" font-weight="600" font-family="Outfit,sans-serif">confirmación</text>
+
+      <line x1="640" y1="568" x2="640" y2="588" stroke="#00C9C8" stroke-width="1.5" marker-end="url(#arrowA)"/>
+
+      <!-- ── ARQUETIPO B: CONTACTO ── -->
+      <!-- Familiar también puede ir a contacto -->
+      <rect x="30" y="600" width="140" height="44" rx="6" fill="rgba(82,196,26,.12)" stroke="#52C41A" stroke-width="1.5" class="uf-node" data-tip="INTERACCIÓN — Familiar en contacto: El familiar que no logra inscribir al adulto mayor busca ayuda directa por la sección contacto."/>
+      <text x="100" y="623" text-anchor="middle" fill="#52C41A" font-size="11" font-weight="600" font-family="Outfit,sans-serif">Familiar va</text>
+      <text x="100" y="637" text-anchor="middle" fill="#52C41A" font-size="11" font-weight="600" font-family="Outfit,sans-serif">a Contacto</text>
+      <line x1="500" y1="168" x2="500" y2="622" stroke="#52C41A" stroke-width="1" stroke-dasharray="3 3"/>
+      <line x1="500" y1="622" x2="170" y2="622" stroke="#52C41A" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrowB)"/>
+
+      <!-- ── ARQUETIPO C: VOLUNTARIO → CONTACTO ── -->
+      <rect x="30" y="680" width="140" height="44" rx="6" fill="rgba(255,197,61,.12)" stroke="#FFC53D" stroke-width="1.5" class="uf-node" data-tip="INTERACCIÓN — Voluntario en contacto: El instructor potencial llega a la sección Contacto para ofrecer su ayuda como facilitador."/>
+      <text x="100" y="703" text-anchor="middle" fill="#FFC53D" font-size="11" font-weight="600" font-family="Outfit,sans-serif">Voluntario va</text>
+      <text x="100" y="717" text-anchor="middle" fill="#FFC53D" font-size="11" font-weight="600" font-family="Outfit,sans-serif">a Contacto</text>
+      <line x1="170" y1="212" x2="30" y2="702" stroke="#FFC53D" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrowC)"/>
+
+      <!-- Contacto → cierre -->
+      <rect x="30" y="760" width="140" height="44" rx="22" fill="#52C41A" class="uf-node" data-tip="CIERRE — Contacto enviado: El familiar o voluntario envía su consulta o solicitud. Fin del recorrido por esa rama."/>
+      <text x="100" y="787" text-anchor="middle" fill="#0D1B2A" font-size="11" font-weight="700" font-family="Outfit,sans-serif">✉ Mensaje</text>
+      <text x="100" y="801" text-anchor="middle" fill="#0D1B2A" font-size="11" font-weight="700" font-family="Outfit,sans-serif">enviado</text>
+      <line x1="100" y1="724" x2="100" y2="760" stroke="#FFC53D" stroke-width="1.5" marker-end="url(#arrowC)"/>
+      <line x1="100" y1="644" x2="100" y2="680" stroke="#52C41A" stroke-width="1.5" marker-end="url(#arrowB)"/>
+      <!-- B y C convergen -->
+      <line x1="100" y1="680" x2="100" y2="724" stroke="#8899AA" stroke-width="1" stroke-dasharray="3 3"/>
+
+      <!-- ── CIERRE PRINCIPAL ── -->
+      <!-- [INTERACCIÓN] Usuario ve próximos pasos -->
+      <rect x="570" y="588" width="140" height="44" rx="6" fill="rgba(124,58,237,.15)" stroke="#7C3AED" stroke-width="1.5" class="uf-node" data-tip="INTERACCIÓN — Próximos pasos: El sistema sugiere al usuario inscrito ver los módulos del taller elegido o agregar el evento a su calendario."/>
+      <text x="640" y="611" text-anchor="middle" fill="#c4b5fd" font-size="11" font-weight="600" font-family="Outfit,sans-serif">Ve próximos</text>
+      <text x="640" y="625" text-anchor="middle" fill="#c4b5fd" font-size="11" font-weight="600" font-family="Outfit,sans-serif">pasos</text>
+
+      <line x1="640" y1="632" x2="640" y2="652" stroke="#7C3AED" stroke-width="1.5" marker-end="url(#arrowG)"/>
+
+      <!-- [CIERRE] Inscrito con éxito -->
+      <rect x="560" y="652" width="160" height="44" rx="22" fill="#52C41A" class="uf-node" data-tip="CIERRE — ¡Inscripción completada! El adulto mayor queda registrado para el taller elegido. Fin del happy path."/>
+      <text x="640" y="675" text-anchor="middle" fill="#0D1B2A" font-size="12" font-weight="700" font-family="Outfit,sans-serif">✅ Inscrito</text>
+      <text x="640" y="689" text-anchor="middle" fill="#0D1B2A" font-size="11" font-weight="600" font-family="Outfit,sans-serif">al taller</text>
+
+      <!-- ── SECCIÓN MÓDULOS (rama lateral) ── -->
+      <rect x="880" y="30" width="150" height="44" rx="6" fill="rgba(124,58,237,.15)" stroke="#7C3AED" stroke-width="1.5" class="uf-node" data-tip="INTERACCIÓN — Abrir módulo: El usuario hace clic en una tarjeta de módulo y se abre el modal con el detalle del curso."/>
+      <text x="955" y="53" text-anchor="middle" fill="#c4b5fd" font-size="11" font-weight="600" font-family="Outfit,sans-serif">Abre modal</text>
+      <text x="955" y="67" text-anchor="middle" fill="#c4b5fd" font-size="11" font-weight="600" font-family="Outfit,sans-serif">de módulo</text>
+
+      <line x1="710" y1="52" x2="880" y2="52" stroke="#8899AA" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arrowG)"/>
+
+      <rect x="880" y="110" width="150" height="44" rx="6" fill="rgba(0,201,200,.12)" stroke="#00C9C8" stroke-width="1.5" class="uf-node" data-tip="PROCESO — Ver contenido del módulo: Se muestra la descripción, temario y duración del módulo seleccionado."/>
+      <text x="955" y="133" text-anchor="middle" fill="#00C9C8" font-size="11" font-weight="600" font-family="Outfit,sans-serif">Ve detalle</text>
+      <text x="955" y="147" text-anchor="middle" fill="#00C9C8" font-size="11" font-weight="600" font-family="Outfit,sans-serif">del módulo</text>
+      <line x1="955" y1="74" x2="955" y2="110" stroke="#8899AA" stroke-width="1.5" marker-end="url(#arrowG)"/>
+
+      <rect x="880" y="190" width="150" height="44" rx="6" fill="rgba(124,58,237,.15)" stroke="#7C3AED" stroke-width="1.5" class="uf-node" data-tip="INTERACCIÓN — Decisión tras ver módulo: El usuario puede ir directo a inscribirse en ese módulo o cerrar y seguir explorando."/>
+      <text x="955" y="213" text-anchor="middle" fill="#c4b5fd" font-size="11" font-weight="600" font-family="Outfit,sans-serif">Decide</text>
+      <text x="955" y="227" text-anchor="middle" fill="#c4b5fd" font-size="11" font-weight="600" font-family="Outfit,sans-serif">inscribirse</text>
+      <line x1="955" y1="154" x2="955" y2="190" stroke="#8899AA" stroke-width="1.5" marker-end="url(#arrowG)"/>
+
+      <!-- Decide inscribirse → flujo registro -->
+      <line x1="955" y1="212" x2="955" y2="250" stroke="#7C3AED" stroke-width="1.5"/>
+      <line x1="955" y1="250" x2="720" y2="250" stroke="#7C3AED" stroke-width="1.5"/>
+      <line x1="720" y1="250" x2="720" y2="130" stroke="#7C3AED" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrowG)"/>
+      <text x="840" y="245" font-size="9" fill="#c4b5fd" font-family="Outfit,sans-serif">→ va a inscribirse</text>
+
+      <!-- ── LEYENDA RECORRIDOS ── -->
+      <rect x="30" y="870" width="500" height="90" rx="8" fill="rgba(14,27,42,.6)" stroke="#1E3052" stroke-width="1"/>
+      <text x="50" y="893" fill="#8899AA" font-size="11" font-family="Outfit,sans-serif" font-weight="700">RECORRIDOS POR ARQUETIPO</text>
+      <line x1="50" y1="910" x2="100" y2="910" stroke="#00C9C8" stroke-width="2.5"/>
+      <text x="108" y="914" fill="#00C9C8" font-size="10" font-family="Outfit,sans-serif">Adulto mayor — inscripción directa</text>
+      <line x1="50" y1="930" x2="100" y2="930" stroke="#52C41A" stroke-width="2"/>
+      <text x="108" y="934" fill="#52C41A" font-size="10" font-family="Outfit,sans-serif">Familiar — ayuda a inscribir o contacta</text>
+      <line x1="50" y1="950" x2="100" y2="950" stroke="#FFC53D" stroke-width="2"/>
+      <text x="108" y="954" fill="#FFC53D" font-size="10" font-family="Outfit,sans-serif">Voluntario — contacto para ser instructor</text>
+      <line x1="280" y1="910" x2="330" y2="910" stroke="#FF6B6B" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <text x="338" y="914" fill="#FF6B6B" font-size="10" font-family="Outfit,sans-serif">Camino de error / corrección</text>
+      <line x1="280" y1="930" x2="330" y2="930" stroke="#8899AA" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <text x="338" y="934" fill="#8899AA" font-size="10" font-family="Outfit,sans-serif">Camino alternativo / regreso</text>
+
+    </svg>
+  </div>
+
+  <!-- NOTA PEDAGOGICA -->
+  <div style="margin-top:24px; display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:16px;">
+    <div style="background:var(--navy2); border:1px solid var(--navy3); border-left:3px solid var(--cyan); border-radius:8px; padding:16px;">
+      <div style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--gray); margin-bottom:6px;">Main Feature</div>
+      <div style="font-weight:700; font-size:14px;">Inscripción al taller</div>
+      <div style="font-size:12px; color:var(--gray); margin-top:4px;">El registro conecta al adulto mayor con los talleres presenciales — núcleo de la propuesta de valor.</div>
+    </div>
+    <div style="background:var(--navy2); border:1px solid var(--navy3); border-left:3px solid var(--decision); border-radius:8px; padding:16px;">
+      <div style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--gray); margin-bottom:6px;">Decisiones clave</div>
+      <div style="font-weight:700; font-size:14px;">3 bifurcaciones</div>
+      <div style="font-size:12px; color:var(--gray); margin-top:4px;">¿Conoce el sitio? → ¿Quiere inscribirse? → ¿Datos válidos? → ¿Servidor ok?</div>
+    </div>
+    <div style="background:var(--navy2); border:1px solid var(--navy3); border-left:3px solid var(--error); border-radius:8px; padding:16px;">
+      <div style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--gray); margin-bottom:6px;">Puntos de fricción</div>
+      <div style="font-weight:700; font-size:14px;">Validación + Red</div>
+      <div style="font-size:12px; color:var(--gray); margin-top:4px;">Formulario con error y fallo de conexión. Ambos tienen ruta de corrección clara.</div>
+    </div>
+    <div style="background:var(--navy2); border:1px solid var(--navy3); border-left:3px solid var(--green); border-radius:8px; padding:16px;">
+      <div style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--gray); margin-bottom:6px;">Happy Path</div>
+      <div style="font-weight:700; font-size:14px;">7 pasos</div>
+      <div style="font-size:12px; color:var(--gray); margin-top:4px;">Llegada → Carga → Clic → Modal → Formulario → Envío → Confirmación. Flujo corto y directo.</div>
+    </div>
+  </div>
+
+</section>
+
+<script>
+  function showSection(name) {
+    document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('sec-' + name).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  function showPanel(name) {
+    document.querySelectorAll('.ia-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.ia-sidebar-item').forEach(i => i.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+
+  // Tooltips en el user flow
+  const tooltip = document.getElementById('tooltip');
+  document.querySelectorAll('.uf-node').forEach(node => {
+    node.style.cursor = 'pointer';
+    node.addEventListener('mouseenter', (e) => {
+      const tip = node.getAttribute('data-tip');
+      if (!tip) return;
+      const parts = tip.split(' — ');
+      tooltip.innerHTML = parts.length > 1
+        ? `<strong>${parts[0]}</strong>${parts.slice(1).join(' — ')}`
+        : tip;
+      tooltip.style.display = 'block';
+    });
+    node.addEventListener('mousemove', (e) => {
+      tooltip.style.left = (e.clientX + 14) + 'px';
+      tooltip.style.top = (e.clientY - 10) + 'px';
+    });
+    node.addEventListener('mouseleave', () => {
+      tooltip.style.display = 'none';
+    });
+  });
+</script>
+
+</body>
+</html>
